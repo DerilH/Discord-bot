@@ -1,8 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
  module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('pause')
-		.setDescription('Pauses the current song!'),
+		.setName('stoprecord')
+		.setDescription('Stops user voice recording'),
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 
@@ -11,14 +11,9 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 			interaction.reply(guild.voice.connection);
 			return;
 		}
-		
-        if (guild.music.playing == false) {
-            interaction.reply("No song are playing now");
-            return;
-        }
 
-        guild.music.pause();
+        guild.voice.endReceive();
         
-        interaction.reply("Paused");
+        interaction.reply("Receive ended");
 	},
 };

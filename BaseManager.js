@@ -1,10 +1,11 @@
 const { BaseClient } = require("discord.js");
 
-class BaseManager extends BaseClient
+class BaseManager 
 {
     constructor(client, bot, guild) 
     {
-        super(client, bot);
+        this.client = client;
+        this.bot = bot;
         this.guild = guild; 
     }
 }
