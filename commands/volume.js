@@ -18,6 +18,17 @@ const { Guild } = require('discord.js');
             return;
         }
 
+		if(typeof guild.voice.connection === 'string')
+		{
+			interaction.reply(guild.voice.connection);
+			return;
+		}
+		
+        if (guild.music.playing == false) {
+            interaction.reply("No song are playing now");
+            return;
+        }
+        
         guild.music.setVolume(volume, interaction.guild.id);
 	    interaction.reply("Volume changed to " + volume + "%");
     },

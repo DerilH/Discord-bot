@@ -9,6 +9,13 @@ module.exports = {
     async execute(interaction, bot) {
             const guild = bot.getGuild(interaction.guild.id);
 
+            if(typeof guild.voice.connection === 'string')
+            {
+                interaction.reply(guild.voice.connection);
+                return;
+            }
+
+            guild.music.end();
             guild.voice.disconnect();
             interaction.reply("Disconnected!");
     },

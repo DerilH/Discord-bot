@@ -3,7 +3,9 @@ const { BaseManager } = require("../BaseManager");
 const Queue = require("../utility/Queue");
 const { Song } = require("./Song");
 
+
 class MusicManager extends BaseManager {
+    playing = false;
     constructor(client, bot, guild) {
         super(client, bot, guild);
 
@@ -11,7 +13,11 @@ class MusicManager extends BaseManager {
 
         this.audioPlayer = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause, } });
         this.audioPlayer.on('stateChange', (oldState, newState) => {
-            if (this.songQueue.empty) return;
+            if (this.songQueue.empty)
+            {
+                this.playing = false;
+                return;
+            }
             if (oldState.status === 'playing' && newState.status === 'idle') {
                 this.nextInQueue(guild.id);
             }
@@ -24,6 +30,17 @@ class MusicManager extends BaseManager {
 
         const subscription = connection.state.subscription;
         return subscription;
+    }
+
+    get estimatedTime() {
+        let fullDuration = 0;
+        this.songQueue.arr.forEach(element => {
+
+            let duration = element.info.durationInSec;
+            fullDuration += duration;
+        });
+        let time = Math.floor(fullDuration / 60) + ":" + (fullDuration % 60);
+        return time;
     }
 
     setVolume(volume) {
@@ -40,9 +57,19 @@ class MusicManager extends BaseManager {
         })
 
         connection.subscribe(this.audioPlayer);
+        this.playing = true;
+    }
+
+    end() 
+    {
+        const connection = this.guild.voice.connection;
+        this.audioPlayer.stop();
+        this.subscription.unsubscribe();
+        this.songQueue.clear();
     }
 
     skip() {
+        if(this.playing == false) return;
         this.audioPlayer.stop();
         this.nextInQueue();
     }
@@ -71,24 +98,18 @@ class MusicManager extends BaseManager {
             }
         }
     }
+
     nextInQueue() {
         if (this.songQueue.empty) return;
         this.songQueue.next();
         this.play(this.songQueue.current);
     }
+
     startQueue() {
         if (this.songQueue.empty) return;
         this.play(this.songQueue.current);
     }
-    get estimatedTime() {
-        let fullDuration = 0;
-        this.songQueue.arr.forEach(element => {
 
-            let duration = element.info.durationInSec;
-            fullDuration += duration;
-        });
-        let time = Math.floor(fullDuration / 60) + ":" + (fullDuration % 60);
-        return time;
-    }
+
 }
 module.exports.MusicManager = MusicManager;

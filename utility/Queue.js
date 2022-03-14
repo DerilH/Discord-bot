@@ -33,6 +33,11 @@
             return this.#arr.length
         }
 
+        clear()
+        {
+            this.#arr = [];
+        }
+
         shift(count)
         {
             for (let index = 0; index <= count; index++) {

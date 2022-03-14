@@ -14,6 +14,7 @@ module.exports = {
                 interaction.reply("I'm already here!")
                 return;
             }
+            
             guild.voice.connect(interaction.member.voice.channel.id);
             interaction.reply("Connected");
         } else 

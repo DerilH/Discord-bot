@@ -59,7 +59,7 @@ module.exports = {
                 videoInfo = data.video_details;
             });
 
-            const stream = await play.stream(url, { discordPlayerCompatibility: true });
+            const stream = await play.stream(url, { discordPlayerCompatibility: true, quality: 2 });
             resource = createAudioResource(stream.stream, { inlineVolume: true, });
         } else {
             videoInfo = await play.search(url, { limit: 1 });
@@ -68,7 +68,7 @@ module.exports = {
                 return;
             }
             videoInfo = videoInfo[0];
-            let stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true });
+            let stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true, quality: 2 });
             resource = createAudioResource(stream.stream, { inlineVolume: true, });
         }
 
