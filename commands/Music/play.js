@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { createAudioResource } = require('@discordjs/voice');
-const { Song } = require('../Music/Song');
 const play = require('play-dl');
+const { Song } = require('../../Music/Song');
 
 const playMessageEmbed =  {
     "title": "Song_title",

@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { getVoiceConnection  } = require('@discordjs/voice');
- module.exports = {
+module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('continue')
 		.setDescription('Continues the current song!'),

@@ -17,17 +17,37 @@ class CommandManager extends BaseClient {
         this.commands = [];
         this.currentPath = path;
 
-        const commandFiles = fs.readdirSync(path).filter(file => file.endsWith('.js'));
+        let commandFiles = new Array();
+        const commandDirs = fs.readdirSync(path).filter(file => {
+            if(file.endsWith('.js')) 
+            {
+                commandFiles.push(file);
+                return false;
+            } else return true;
+        })
+
+        commandDirs.forEach(dir => {
+            let currentFiles = fs.readdirSync(path + "/" + dir + "/").filter(file => file.endsWith('.js'));
+            currentFiles.forEach((file, index) => 
+            {
+                currentFiles[index] = dir + '/' + file;
+            });
+            commandFiles = commandFiles.concat(currentFiles);
+        });
+
+        console.log("Commands loaded: ");
+        console.log(commandFiles);
 
         for (const file of commandFiles) {
             const command = require(path + `/${file}`);
-            
+
             this.commands.push(command.data.toJSON());
             this.client.commands.set(command.data.name, command);
         }
     }
 
     deployCommandsLocal(guildId) {
+        this.deleteCommandsLocal(guildId);
         this.Rest.put(Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString()), { body: this.commands })
             .then(() => console.log('Successfully registered application commands.'))
             .catch(function (reason) {
@@ -40,6 +60,18 @@ class CommandManager extends BaseClient {
             Routes.applicationCommands(this.bot.clientId.toString()),
             { body: this.commands },
         ).then(() => console.log("Successfully registered application commands.")).catch(console.error);
+    }
+
+    deleteCommandsLocal(guildId) {
+        this.Rest.get(Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString()))
+            .then(data => {
+                const promises = [];
+                for (const command of data) {
+                    const deleteUrl = `${Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString())}/${command.id}`;
+                    promises.push(this.Rest.delete(deleteUrl));
+                }
+                return Promise.all(promises);
+            });
     }
 
     deleteCommandsGlobal() {
