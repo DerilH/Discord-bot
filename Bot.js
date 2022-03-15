@@ -36,7 +36,6 @@ class Bot {
 
         this.client.on('interactionCreate', async interaction => {
             const errorMethod = console.error;
-            console.error = () => {};
             try {
                 if (!interaction.isCommand()) return;
 
@@ -54,8 +53,17 @@ class Bot {
                     await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
                 }
                 guild.errorEmitter.setInteraction(undefined);
-            } catch (error) {}
-            console.error = errorMethod;
+            } catch (error) 
+            {
+                console.error = errorMethod;
+            }
+            
+        });
+
+        this.client.on('voiceStateUpdate', (oldState, newState) => {
+            if(newState.channel.name != 'Create room') return;
+
+
         });
 
         this.client.on('guildCreate', guild => {

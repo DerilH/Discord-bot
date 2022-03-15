@@ -5,15 +5,11 @@ module.exports = {
 		.setDescription('Continues the current song!'),
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
-
-		if(typeof guild.voice.connection === 'string')
-		{
-			interaction.reply(guild.voice.connection);
-			return;
-		}
 		
+		guild.voice.checkConnectedErr();
+
         if (guild.music.playing == false) {
-            interaction.reply("No song are playing now");
+            await guild.errorEmitter.emit('interactionError', "No songs are playing now");
             return;
         }
 

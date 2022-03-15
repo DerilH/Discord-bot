@@ -49,17 +49,19 @@ module.exports = {
         const url = interaction.options.getString('url');
 
         const connection = guild.voice.connection;
-        if (typeof connection === 'string') guild.voice.connect(interaction.member.voice.channel.id);
+        if (!guild.voice.connected) guild.voice.connect(interaction.member.voice.channel.id);
 
         let videoInfo;
         let resource;
+        
+        let stream;
 
         if (play.yt_validate(url) === 'video') {
             await play.video_info(url).then(data => {
                 videoInfo = data.video_details;
             });
 
-            const stream = await play.stream(url, { discordPlayerCompatibility: true, quality: 2 });
+            stream = await play.stream(url, { discordPlayerCompatibility: true, quality: 0 });
             resource = createAudioResource(stream.stream, { inlineVolume: true, });
         } else {
             videoInfo = await play.search(url, { limit: 1 });
@@ -68,11 +70,11 @@ module.exports = {
                 return;
             }
             videoInfo = videoInfo[0];
-            let stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true, quality: 2 });
+            stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true, quality: 0 });
             resource = createAudioResource(stream.stream, { inlineVolume: true, });
         }
 
-        const song = new Song(videoInfo, resource);
+        const song = new Song(videoInfo, resource, stream.stream);
         guild.music.addToQueue(song);
 
         playMessageEmbed.title = videoInfo.title;

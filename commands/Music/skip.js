@@ -10,13 +10,8 @@ module.exports = {
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 
+		guild.voice.checkConnectedErr();
 
-        if(typeof guild.voice.connection === 'string')
-		{
-			interaction.reply(guild.voice.connection);
-			return;
-		}
-		
         if (guild.music.playing == false) {
             interaction.reply("No song are playing now");
             return;

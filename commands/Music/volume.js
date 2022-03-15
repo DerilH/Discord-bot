@@ -18,11 +18,7 @@ const { Guild } = require('discord.js');
             return;
         }
 
-		if(typeof guild.voice.connection === 'string')
-		{
-			interaction.reply(guild.voice.connection);
-			return;
-		}
+		guild.voice.checkConnectedErr();
 		
         if (guild.music.playing == false) {
             interaction.reply("No song are playing now");

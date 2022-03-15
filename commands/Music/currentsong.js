@@ -39,9 +39,10 @@ const playMessageEmbed =  {
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
         
+        guild.voice.checkConnectedErr();
+
         if (guild.music.playing == false) {
-            interaction.reply("No song is playing now");
-            return;
+          await guild.errorEmitter.emit('interactionError', "No song is playing now");
         }
 
         const videoInfo = guild.music.songQueue.current.info;

@@ -6,15 +6,10 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 
-		if(typeof guild.voice.connection === 'string')
-		{
-			interaction.reply(guild.voice.connection);
-			return;
-		}
+		guild.voice.checkConnectedErr();
 		
         if (guild.music.playing == false) {
-            interaction.reply("No song are playing now");
-            return;
+			await guild.errorEmitter.emit('interactionError', "No song is playing now");
         }
 
         guild.music.pause();

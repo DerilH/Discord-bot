@@ -17,10 +17,22 @@ class VoiceManager extends BaseManager
 
     get connection() {
         var connection = getVoiceConnection(this.guild.id);
-        if (!connection) {
-            return "I`m not connected";
-        }
         return connection;
+    }
+
+    get connected() 
+    {
+        if(!this.connection) {
+            return false;
+        } 
+        return true;
+    }
+
+    checkConnectedErr()
+    {
+        if (!this.connection) {
+            this.guild.errorEmitter.emit('interactionError', "I`m not connected");
+        }
     }
 
     connect(channelId)

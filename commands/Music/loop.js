@@ -4,15 +4,16 @@ const { getVoiceConnection } = require('@discordjs/voice');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('disconnect')
-        .setDescription('Diconnects from voice channel'),
+        .setName('loop')
+        .setDescription('loop')
+        .addBooleanOption(option => option.setName('state')
+            .setDescription('Looped state')
+            .setRequired(true)),
     async execute(interaction, bot) {
             const guild = bot.getGuild(interaction.guild.id);
 
-            guild.voice.checkConnectedErr();
+            guild.music.looped = interaction.options.getBoolean('state');
 
-            guild.music.end();
-            guild.voice.disconnect();
-            interaction.reply("Disconnected!");
+            interaction.reply("Loop!");
     },
 };

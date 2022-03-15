@@ -19,7 +19,13 @@ class MusicManager extends BaseManager {
                 return;
             }
             if (oldState.status === 'playing' && newState.status === 'idle') {
-                this.nextInQueue(guild.id);
+                if(this.looped == true) 
+                {
+                    this.songQueue.current.
+                    this.play(this.songQueue.current);
+                } else {
+                    this.nextInQueue(guild.id);
+                }
             }
         });
     }

@@ -11,6 +11,7 @@ class BotErrorEmitter extends EventEmitter
         this.on('interactionError', message => {
             if(!this.#currentInteraction) return;
             this.#currentInteraction.reply(message);
+            console.error = () => {};
             throw message;
         })
     }
