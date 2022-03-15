@@ -1,5 +1,5 @@
 const { BaseClient } = require("./BaseClient");
-const { BaseManager } = require("./BaseManager");
+const { BotErrorEmitter } = require("./BotErrorEmitter");
 const { MusicManager } = require("./Music/MusicManager");
 const { VoiceManager } = require("./Voice/VoiceManager");
 
@@ -13,6 +13,7 @@ class GuildManager extends BaseClient
 
         this.music = new MusicManager(client, bot, this); 
         this.voice = new VoiceManager(client, bot, this);    
+        this.errorEmitter = new BotErrorEmitter(bot);
     }
 }
 module.exports.GuildManager = GuildManager;

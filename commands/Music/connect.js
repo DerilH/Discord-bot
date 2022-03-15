@@ -18,7 +18,7 @@ module.exports = {
             interaction.reply("Connected");
         } else 
         {
-            interaction.reply("You must enter to voice channel");
-        } 
+            await guild.errorEmitter.emit('interactionError', "You must enter to voice channel");
+        }
     },
 };

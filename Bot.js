@@ -1,11 +1,8 @@
 const { getVoiceConnection } = require('@discordjs/voice');
-const { Client, Collection, Intents } = require('discord.js');
-const fs = require('node:fs');
+const { Client, Intents } = require('discord.js');
 const { CmdCommandHandler } = require('./Interaction/CmdCommandHandler');
 const { CommandManager } = require('./Interaction/CommandManager');
 const { GuildManager } = require('./GuildManager');
-const { MusicManager } = require('./Music/MusicManager');
-const { BotErrorEmitter } = require('./Channels/BotErrorEmitter');
 
 class Bot {
     #cmdHandler
@@ -15,18 +12,15 @@ class Bot {
         this.clientId = clientId;
 
         this.client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
-        
+
         this.#cmdHandler = new CmdCommandHandler(this);
         this.commandManager = new CommandManager(this.client, this);
         this.commandManager.loadCommands(commandsPath);
-        this.#errorEmiter = new BotErrorEmitter(this);
-
 
         this.#setEvents();
     }
 
-    getGuild(guildId) 
-    {
+    getGuild(guildId) {
         return this.#guilds[guildId];
     }
 
@@ -41,18 +35,27 @@ class Bot {
         });
 
         this.client.on('interactionCreate', async interaction => {
-            if (!interaction.isCommand()) return;
-
-            const command = this.client.commands.get(interaction.commandName);
-
-            if (!command) return;
-
+            const errorMethod = console.error;
+            console.error = () => {};
             try {
-                await command.execute(interaction, this);
-            } catch (error) {
-                console.error(error);
-                await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-            }
+                if (!interaction.isCommand()) return;
+
+                const guild = this.getGuild(interaction.guild.id);
+                guild.errorEmitter.setInteraction(interaction);
+
+                const command = this.client.commands.get(interaction.commandName);
+
+                if (!command) return;
+
+                try {
+                    await command.execute(interaction, this);
+                } catch (error) {
+                    console.error(error);
+                    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                }
+                guild.errorEmitter.setInteraction(undefined);
+            } catch (error) {}
+            console.error = errorMethod;
         });
 
         this.client.on('guildCreate', guild => {
@@ -62,8 +65,7 @@ class Bot {
             delete this.#guilds[guild.id];
         });
 
-        process.on('exit', () => 
-        {
+        process.on('exit', () => {
             this.shutdown();
         })
     }
@@ -72,14 +74,12 @@ class Bot {
         this.client.login(this.token);
     }
 
-    shutdown()
-    {
+    shutdown() {
         for (const [key, value] of Object.entries(this.#guilds)) {
             const connection = getVoiceConnection(value.id);
-            if(connection) 
-            {
+            if (connection) {
                 connection.destroy();
-            } 
+            }
         }
         console.log('Goodbye!')
     }
