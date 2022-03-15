@@ -5,6 +5,7 @@ const { CmdCommandHandler } = require('./Interaction/CmdCommandHandler');
 const { CommandManager } = require('./Interaction/CommandManager');
 const { GuildManager } = require('./GuildManager');
 const { MusicManager } = require('./Music/MusicManager');
+const { BotErrorEmitter } = require('./Channels/BotErrorEmitter');
 
 class Bot {
     #cmdHandler
@@ -18,7 +19,9 @@ class Bot {
         this.#cmdHandler = new CmdCommandHandler(this);
         this.commandManager = new CommandManager(this.client, this);
         this.commandManager.loadCommands(commandsPath);
-        
+        this.#errorEmiter = new BotErrorEmitter(this);
+
+
         this.#setEvents();
     }
 

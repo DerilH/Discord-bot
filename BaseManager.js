@@ -1,5 +1,3 @@
-const { BaseClient } = require("discord.js");
-
 class BaseManager 
 {
     constructor(client, bot, guild) 
