@@ -1,40 +1,34 @@
-const {BaseManager} = require('../BaseManager');
+const { BaseManager } = require('../BaseManager');
 const { ChannelNode } = require('./ChannelNode');
-class ChannelManager extends BaseManager{
+class ChannelManager extends BaseManager {
 
-    userChannelNodes = new Array();
+    userChannelNode;
 
-    constructor(client, bot, guild)
-    {
+    constructor(client, bot, guild) {
         super(client, bot, guild);
     }
 
-    async createChannel(name, options)
-    {
+    async createChannel(name, options) {
         let channel = await this.guild.guild.channels.create(name, options);
         return channel;
     }
 
-    async createChannelIn(name, options, category) 
-    {
+    async createChannelIn(name, options, category) {
         let channel = await category.createChannel(name, options);
         return channel;
     }
 
-    async createUserChannelNode(category)
-    {
+    async createUserChannelNode() {
         let node = new ChannelNode(this);
 
-        if (category == undefined) {
-            node.category = await this.createChannel('User channels', {
-                type: 'GUILD_CATEGORY'
-            });
-            console.log(node.category);
-            console.log(1);
-            node.creatorChannel = await this.createChannelIn('Create room', {
-             type: 'GUILD_VOICE'
-            }, node.category)
-        }
+        node.category = await this.createChannel('User channels', {
+            type: 'GUILD_CATEGORY'
+        });
+        node.creatorChannel = await this.createChannelIn('Create room', {
+            type: 'GUILD_VOICE'
+        }, node.category)
+
+        this.userChannelNode = node;
     }
 }
 module.exports.ChannelManager = ChannelManager;

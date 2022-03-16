@@ -2,23 +2,18 @@ class ChannelNode {
 
     category
     creatorChannel
+    #channels = new Array();
 
     contructor(channelManager) {
         this.channelManager = channelManager;
     }
-    
-    newCreatorChannel(client, guild, categoryName) {
 
-        if (typeof categoryName === 'string') {
-            this.category = guild.channels.create(categoryName, {
-                type: 'category'
-            }).then(cat => {
-                this.creatorChannel = guild.channels.create('Create room', {
-                    type: 'GUILD_VOICCE',
-                    parent: cat.parentID,
-                })
-            })
-        }
+    getChannel(channelId) {
+        return this.#channels.find(item => item.id == channelId);
+    }
+
+    addChannel(channel) {
+        this.#channels.push(channel);
     }
 }
 module.exports.ChannelNode = ChannelNode;

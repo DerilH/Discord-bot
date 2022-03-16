@@ -62,7 +62,7 @@ class Bot {
 
         this.client.on('voiceStateUpdate', (oldState, newState) => {
             if(newState.channel.name != 'Create room') return;
-
+            
 
         });
 
