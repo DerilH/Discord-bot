@@ -21,7 +21,6 @@ class MusicManager extends BaseManager {
             if (oldState.status === 'playing' && newState.status === 'idle') {
                 if(this.looped == true) 
                 {
-                    this.songQueue.current.
                     this.play(this.songQueue.current);
                 } else {
                     this.nextInQueue(guild.id);

@@ -3,11 +3,12 @@ const { Client, Intents } = require('discord.js');
 const { CmdCommandHandler } = require('./Interaction/CmdCommandHandler');
 const { CommandManager } = require('./Interaction/CommandManager');
 const { GuildManager } = require('./GuildManager');
+const { DBManager } = require('./DBManager');
 
 class Bot {
     #cmdHandler
     #guilds = {};
-    constructor(token, clientId, commandsPath) {
+    constructor(token, clientId, commandsPath, databasePath) {
         this.token = token;
         this.clientId = clientId;
 
@@ -16,6 +17,7 @@ class Bot {
         this.#cmdHandler = new CmdCommandHandler(this);
         this.commandManager = new CommandManager(this.client, this);
         this.commandManager.loadCommands(commandsPath);
+        this.dbManager = new DBManager(this.client, this, databasePath);
 
         this.#setEvents();
     }
@@ -58,12 +60,6 @@ class Bot {
                 console.error = errorMethod;
             }
             
-        });
-
-        this.client.on('voiceStateUpdate', (oldState, newState) => {
-            if(newState.channel.name != 'Create room') return;
-            
-
         });
 
         this.client.on('guildCreate', guild => {
