@@ -8,7 +8,8 @@ const { Guild, Permissions } = require('discord.js');
         .addIntegerOption(option => option
             .setName('volume')
             .setDescription("volume")
-            .setRequired(true)),
+            .setRequired(true))
+            .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

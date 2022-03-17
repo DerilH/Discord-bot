@@ -6,7 +6,8 @@ const { Interaction, Permissions } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('skip')
-        .setDescription('Skip currently playing song'),
+        .setDescription('Skip currently playing song')
+        .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

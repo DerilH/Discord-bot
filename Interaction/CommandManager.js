@@ -49,42 +49,74 @@ class CommandManager extends BaseClient {
     }
 
     async deployCommandsLocal(guildId) {
-        this.deleteCommandsLocal(guildId);
+        //this.deleteCommandsLocal(guildId);
         await this.Rest.put(Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString()), { body: this.commands })
             .then(() => console.log('Successfully registered application commands.'))
             .catch(function (reason) {
                 console.log(reason);
             });
-        this.loadCommandRoles(guildId);
+        //this.loadCommandPermissionsLocal(guildId);
     }
 
-    loadCommandRoles(guildId){
+    async loadCommandPermissionsLocal(guildId){
         const guild = this.bot.getGuild(guildId).guild;
         const roles = Array.from(guild.roles.cache.values());
-        //console.log(roles)
 
-        const commands = Array.from(guild.commands.cache.values());
-        console.log(commands);
-        commands.forEach(command => {
-            console.log(command.data.name);
-
-            const rolesA = roles.filter(role => {
-                role.permissions.has(command.permissions);
+        const commandsCollection = await guild.commands.fetch();
+        const guildCommands = Array.from(commandsCollection.values());
+        const commands = this.client.commands;
+        guildCommands.filter(element => commands.get(element.name).data.defaultPermission == false)
+        .forEach(element => {
+            const cmdRoles = roles.filter(role => {
+                return role.permissions.has(commands.get(element.name).permissions);
             });
 
             const permissionTemplate =	{
                 id: '',
                 type: 'ROLE',
-                permission: false,
+                permission: true,
             }
             const permissions = [];
-            rolesA.forEach(role => {
+            cmdRoles.forEach(role => {
                 let permission = permissionTemplate;
                 permission.id = role.id;
                 permissions.push(permission);
             })
-            console.log(permissions);
-            command.permissions.set({permissions});
+            element.permissions.set({permissions});
+        })
+        console.log("Permissions reloaded")
+    }
+
+    async loadCommandPermissionsGlobal(){
+        const guilds = Array.from(await this.client.guilds.cache.values());
+
+        const commandsCollection = await this.client.application.commands.fetch();
+        const commands = this.client.commands;
+        const globalCommands = Array.from(commandsCollection.values());
+
+        let roles = [];
+        guilds.forEach(guild => {
+            roles.concat(Array.from(guild.roles.cache.values()));
+        });
+
+        globalCommands.filter(element => commands.get(element.name).data.defaultPermission == false)
+        .forEach(element => {
+            const cmdRoles = roles.filter(role => {
+                return role.permissions.has(commands.get(element.name).permissions);
+            });
+
+            const permissionTemplate =	{
+                id: '',
+                type: 'ROLE',
+                permission: true,
+            }
+            const permissions = [];
+            cmdRoles.forEach(role => {
+                let permission = permissionTemplate;
+                permission.id = role.id;
+                permissions.push(permission);
+            })
+            element.permissions.set({permissions});
         })
     }
 

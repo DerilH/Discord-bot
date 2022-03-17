@@ -3,7 +3,8 @@ const { Permissions } = require('discord.js');
  module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('stoprecord')
-		.setDescription('Stops user voice recording'),
+		.setDescription('Stops user voice recording')
+	.setDefaultPermission(false),
 	permissions: [Permissions.FLAGS.ADMINISTRATOR],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

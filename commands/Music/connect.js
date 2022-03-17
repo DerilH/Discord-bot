@@ -3,7 +3,8 @@ const { Permissions } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('connect')
-        .setDescription('Connects to voice channel'),
+        .setDescription('Connects to voice channel')
+        .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

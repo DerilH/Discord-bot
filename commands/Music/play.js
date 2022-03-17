@@ -12,7 +12,8 @@ module.exports = {
     .setDescription('Plays the specified song')
     .addStringOption(option => option.setName('url')
       .setDescription('Song url')
-      .setRequired(true)),
+      .setRequired(true))
+    .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
   async execute(interaction, bot) {
     const guild = bot.getGuild(interaction.guild.id);

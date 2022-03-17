@@ -18,7 +18,7 @@ class ChannelManager extends BaseManager {
         return channel;
     }
 
-    async createUserChannelNode() {
+    async enableUserChannels() {
         let node = new ChannelNode(this);
 
         node.category = await this.createChannel('User channels', {
@@ -29,6 +29,12 @@ class ChannelManager extends BaseManager {
         }, node.category)
 
         this.userChannelNode = node;
+        return this.userChannelNode;
+    }
+
+    async disableUserChannels() {
+        await this.userChannelNode.creatorChannel.delete();
+        await this.userChannelNode.category.delete();
     }
 }
 module.exports.ChannelManager = ChannelManager;

@@ -36,7 +36,8 @@ const playMessageEmbed =  {
  module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('currentsong')
-		.setDescription("Shows currently playing song!"),
+		.setDescription("Shows currently playing song!")
+    .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

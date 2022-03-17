@@ -9,7 +9,8 @@ module.exports = {
         .setDescription('loop')
         .addBooleanOption(option => option.setName('state')
             .setDescription('Looped state')
-            .setRequired(true)),
+            .setRequired(true))
+        .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
             const guild = bot.getGuild(interaction.guild.id);

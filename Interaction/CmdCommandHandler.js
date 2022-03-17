@@ -10,14 +10,18 @@ class CmdCommandHandler {
 
             const input = line.toString();
             if(!input.startsWith('/')) return;
-            if (input === '/de') {
+            if (input == '/deployL') {
                 bot.commandManager.loadCommands(bot.commandManager.currentPath);
                 await bot.commandManager.deployCommandsLocal(process.env.guildId);
-            }else if(input === '/deG')
+            }else if(input == '/deployG')
             {
                 bot.commandManager.loadCommands(bot.commandManager.currentPath);
                 bot.commandManager.deployCommandsGlobal();
-            } 
+            } else if(input == '/reloadPermsL') {
+                bot.commandManager.loadCommandPermissionsLocal(process.env.guildId);
+            } else if(input == '/reloadPermsG'){
+                bot.commandManager.loadCommandPermissionsGlobal();
+            }
 
             rl.prompt();
         }).on('close', function () {
