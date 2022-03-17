@@ -1,22 +1,23 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { Permissions } = require('discord.js');
 const { DBManager } = require('../../DBManager');
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('changeuserchannels')
-        .setDescription('change')
+        .setName('setuserchannels')
+        .setDescription('Set user channels state')
         .addBooleanOption(option => option.setName('state')
             .setDescription('state')
             .setRequired(true)),
+	permissions: [Permissions.FLAGS.ADMINISTRATOR],
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
         const state = interaction.options.getBoolean('state');
 
-        if (bot.dbManager.guildExists(guild.id, 'userChannels')) {
-            bot.dbManager.editUserChannel(guild.id, state, null);
+        if (await bot.dbManager.guildExists(guild.id, 'userChannels')) {
+            await bot.dbManager.editUserChannel(guild.id, state, null);
         } else {
-            bot.dbManager.insertUserChannel(guild.id, state, null);
+            await bot.dbManager.insertUserChannel(guild.id, state, null);
         }
-
-        interaction.reply('ok');
-    },
+        await interaction.reply('ok');
+    }
 };

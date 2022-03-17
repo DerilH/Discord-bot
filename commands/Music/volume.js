@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { getVoiceConnection  } = require('@discordjs/voice');
-const { Guild } = require('discord.js');
+const { Guild, Permissions } = require('discord.js');
  module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('volume')
@@ -9,6 +9,7 @@ const { Guild } = require('discord.js');
             .setName('volume')
             .setDescription("volume")
             .setRequired(true)),
+	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
         const volume = interaction.options.getInteger('volume');

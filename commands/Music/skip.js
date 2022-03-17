@@ -1,12 +1,13 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { joinVoiceChannel } = require('@discordjs/voice');
 const { getVoiceConnection } = require('@discordjs/voice');
-const { Interaction } = require('discord.js');
+const { Interaction, Permissions } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('skip')
         .setDescription('Skip currently playing song'),
+	permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 

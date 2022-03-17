@@ -1,8 +1,10 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
- module.exports = {
+const { Permissions } = require('discord.js');
+module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('record')
 		.setDescription('Records user voice'),
+	permissions: [Permissions.FLAGS.ADMINISTRATOR],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 

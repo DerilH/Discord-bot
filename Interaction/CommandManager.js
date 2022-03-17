@@ -1,8 +1,9 @@
 const { BaseClient } = require("../BaseClient");
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { Collection } = require("discord.js");
+const { Collection, Permissions } = require("discord.js");
 const fs = require('node:fs');
+const { totalmem } = require("node:os");
 
 class CommandManager extends BaseClient {
 
@@ -15,6 +16,7 @@ class CommandManager extends BaseClient {
     loadCommands(path) {
         this.client.commands = new Collection();
         this.commands = [];
+        this.permissions = {};
         this.currentPath = path;
 
         let commandFiles = new Array();
@@ -46,13 +48,44 @@ class CommandManager extends BaseClient {
         }
     }
 
-    deployCommandsLocal(guildId) {
+    async deployCommandsLocal(guildId) {
         this.deleteCommandsLocal(guildId);
-        this.Rest.put(Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString()), { body: this.commands })
+        await this.Rest.put(Routes.applicationGuildCommands(this.bot.clientId.toString(), guildId.toString()), { body: this.commands })
             .then(() => console.log('Successfully registered application commands.'))
             .catch(function (reason) {
                 console.log(reason);
             });
+        this.loadCommandRoles(guildId);
+    }
+
+    loadCommandRoles(guildId){
+        const guild = this.bot.getGuild(guildId).guild;
+        const roles = Array.from(guild.roles.cache.values());
+        //console.log(roles)
+
+        const commands = Array.from(guild.commands.cache.values());
+        console.log(commands);
+        commands.forEach(command => {
+            console.log(command.data.name);
+
+            const rolesA = roles.filter(role => {
+                role.permissions.has(command.permissions);
+            });
+
+            const permissionTemplate =	{
+                id: '',
+                type: 'ROLE',
+                permission: false,
+            }
+            const permissions = [];
+            rolesA.forEach(role => {
+                let permission = permissionTemplate;
+                permission.id = role.id;
+                permissions.push(permission);
+            })
+            console.log(permissions);
+            command.permissions.set({permissions});
+        })
     }
 
     deployCommandsGlobal() {

@@ -1,8 +1,10 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { Permissions } = require('discord.js');
  module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pause')
 		.setDescription('Pauses the current song!'),
+	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
 

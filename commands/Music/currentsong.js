@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { Permissions } = require('discord.js');
 const playMessageEmbed =  {
     "title": "Song_title",
     "color": 5719,
@@ -36,6 +37,7 @@ const playMessageEmbed =  {
 	data: new SlashCommandBuilder()
 		.setName('currentsong')
 		.setDescription("Shows currently playing song!"),
+	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
         

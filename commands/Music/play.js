@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { createAudioResource } = require('@discordjs/voice');
+const { Permissions } = require('discord.js');
 const play = require('play-dl');
 const { Song } = require('../../Music/Song');
 
@@ -12,6 +13,7 @@ module.exports = {
     .addStringOption(option => option.setName('url')
       .setDescription('Song url')
       .setRequired(true)),
+	permissions: [Permissions.FLAGS.SEND_MESSAGES],
   async execute(interaction, bot) {
     const guild = bot.getGuild(interaction.guild.id);
     const url = interaction.options.getString('url');
