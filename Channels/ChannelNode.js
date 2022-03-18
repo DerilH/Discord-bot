@@ -2,6 +2,7 @@ class ChannelNode {
 
     category
     creatorChannel
+    enabled
     #channels = new Array();
 
     contructor(channelManager) {

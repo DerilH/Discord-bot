@@ -20,21 +20,11 @@ module.exports = {
 
         if(state == 'enable' ) {
             const node = await guild.channel.enableUserChannels();
-            
-            if (await bot.dbManager.guildExists(guild.id, 'userChannels')) {
-                await bot.dbManager.editUserChannel(guild.id, true, node.creatorChannel.id);
-            } else {
-                await bot.dbManager.insertUserChannel(guild.id, true, node.creatorChannel.id);
-            }
+
             interaction.reply('User channels enabled');
         } else if(state == 'disable') {
-            guild.channel.disableUserChannels();
-
-            if (await bot.dbManager.guildExists(guild.id, 'userChannels')) {
-                await bot.dbManager.editUserChannel(guild.id, false, null);    
-            } else {
-                await bot.dbManager.insertUserChannel(guild.id, false, null);
-            }
+            await guild.channel.disableUserChannels();
+            
             interaction.reply('User channels disabled');
         } else await interaction.reply("Invalid option");
     }

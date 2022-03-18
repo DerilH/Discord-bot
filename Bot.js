@@ -15,8 +15,8 @@ class Bot {
         this.client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES] });
 
         this.#cmdHandler = new CmdCommandHandler(this);
-        this.commandManager = new CommandManager(this.client, this);
-        this.commandManager.loadCommands(commandsPath);
+        this.commandManager = new CommandManager(this.client, this, commandsPath);
+        this.commandManager.loadCommands();
         this.dbManager = new DBManager(this.client, this, databasePath);
 
         this.#setEvents();
@@ -30,8 +30,9 @@ class Bot {
         this.client.once('ready', () => {
 
             const guilds = Array.from(this.client.guilds.cache.values());
-            guilds.forEach(element => {
+            guilds.forEach(async element => {
                 this.#guilds[element.id] = new GuildManager(this.client, this, element);
+                await this.#guilds[element.id].channel.loadUserChannels();
             });
             console.log('Ready!');
         });

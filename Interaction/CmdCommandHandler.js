@@ -21,6 +21,9 @@ class CmdCommandHandler {
                 bot.commandManager.loadCommandPermissionsLocal(process.env.guildId);
             } else if(input == '/reloadPermsG'){
                 bot.commandManager.loadCommandPermissionsGlobal();
+            } else if(input == '/reloadCommands'){
+                bot.commandManager.loadCommands();
+                bot.commandManager.loadCommandPermissionsGlobal();
             }
 
             rl.prompt();

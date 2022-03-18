@@ -25,40 +25,40 @@ class DBManager extends BaseClient {
     }
 
     async insertUserChannel(guildId, enabled, creatorChannelId) {
-        await this.db.run(`INSERT INTO userChannels (guildId, enabled, creatorChannelId) VALUES (?, ?, ?)`, [guildId, enabled, creatorChannelId])
-        .catch(err => {
-            console.log(err);
-        })
-        console.log('inserted');
-    }
-
-    async editUserChannel(guildId, enabled, creatorChannelId) {
-        await this.db.run(`UPDATE userChannels SET enabled = ?, creatorChannelId = ? WHERE guildId = ?`, [enabled, creatorChannelId, guildId])
-        .catch(err => {
-            if (err) {
+        const exists = await this.guildExists(guildId, "userChannels");
+        if(exists){
+            await this.db.run(`UPDATE userChannels SET enabled = ?, creatorChannelId = ? WHERE guildId = ?`, [enabled, creatorChannelId, guildId])
+            .catch(err => {
+                if (err) {
+                    console.log(err);
+                }
+            })
+        } else {
+            await this.db.run(`INSERT INTO userChannels (guildId, enabled, creatorChannelId) VALUES (?, ?, ?)`, [guildId, enabled, creatorChannelId])
+            .catch(err => {
                 console.log(err);
-            }
-        })
-        console.log('edited');
+            })
+        } 
     }
 
     async guildExists(guildId, table) {
         let exists = false;
         await this.db.get(`SELECT EXISTS(SELECT 1 FROM ${table} WHERE guildId = ?)`, [guildId]).then(row => {
             if(row['EXISTS(SELECT 1 FROM userChannels WHERE guildId = ?)'] == 1) exists = true;
-            console.log(row);
         })
-        console.log('Exists ' + exists);
         return exists;
     }
 
-    async getCreatorChannel(guildId) {
-        let creatorChannelId
+    async getUserChannel(guildId) {
+        const exists = await this.guildExists(guildId, "userChannels");
+        if(!exists){
+            return undefined;
+        }
+        let userChannel
         await this.db.get(`SELECT * FROM userChannels WHERE guildId = ?`, [guildId]).then(row =>{
-            creatorChannelId = row.creatorChannelId;
+            userChannel = row;
         });
-
-        return creatorChannelId;
+        return userChannel;
     }
 }
 module.exports.DBManager = DBManager;

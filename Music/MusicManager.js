@@ -1,6 +1,6 @@
 const { createAudioPlayer, NoSubscriberBehavior } = require("@discordjs/voice");
 const { BaseManager } = require("../BaseManager");
-const Queue = require("../utility/Queue");
+const Queue = require("../Utility/Queue");
 const { Song } = require("./Song");
 
 

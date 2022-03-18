@@ -7,20 +7,20 @@ const { totalmem } = require("node:os");
 
 class CommandManager extends BaseClient {
 
-    constructor(client, bot) {
+    constructor(client, bot, path) {
         super(client, bot);
+        this.path = path;
 
         this.Rest = new REST({ version: '9' }).setToken(bot.token);
     }
 
-    loadCommands(path) {
+    loadCommands() {
         this.client.commands = new Collection();
         this.commands = [];
         this.permissions = {};
-        this.currentPath = path;
 
         let commandFiles = new Array();
-        const commandDirs = fs.readdirSync(path).filter(file => {
+        const commandDirs = fs.readdirSync(this.path).filter(file => {
             if(file.endsWith('.js')) 
             {
                 commandFiles.push(file);
@@ -29,7 +29,7 @@ class CommandManager extends BaseClient {
         })
 
         commandDirs.forEach(dir => {
-            let currentFiles = fs.readdirSync(path + "/" + dir + "/").filter(file => file.endsWith('.js'));
+            let currentFiles = fs.readdirSync(this.path + "/" + dir + "/").filter(file => file.endsWith('.js'));
             currentFiles.forEach((file, index) => 
             {
                 currentFiles[index] = dir + '/' + file;
@@ -41,7 +41,7 @@ class CommandManager extends BaseClient {
         console.log(commandFiles);
 
         for (const file of commandFiles) {
-            const command = require(path + `/${file}`);
+            const command = require(this.path + `/${file}`);
 
             this.commands.push(command.data.toJSON());
             this.client.commands.set(command.data.name, command);
