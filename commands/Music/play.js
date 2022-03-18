@@ -18,6 +18,7 @@ module.exports = {
   async execute(interaction, bot) {
     const guild = bot.getGuild(interaction.guild.id);
     const url = interaction.options.getString('url');
+    await interaction.deferReply();
 
     const connection = guild.voice.connection;
     if (!guild.voice.connected) guild.voice.connect(interaction.member.voice.channel.id);
@@ -25,7 +26,7 @@ module.exports = {
     const song = await getSong(url);
     guild.music.addToQueue(song);
 
-    await interaction.reply({ embeds: [createEmbed(song, guild)] });
+    await interaction.editReply({ embeds: [createEmbed(song, guild)] });
   },
 };
 

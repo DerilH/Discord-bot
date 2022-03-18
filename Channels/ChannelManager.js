@@ -12,14 +12,14 @@ class ChannelManager extends BaseManager {
         try{
             const exists =  await this.bot.dbManager.guildExists(this.guild.id, 'userChannels');
             if(!exists) {
-                await this.bot.dbManager.insertUserChannel(this.guild.id, false, null)
+                await this.bot.dbManager.insertUserChannel(this.guild.id, false, undefined)
                 return;
             }
 
             const userChannel = await this.bot.dbManager.getUserChannel(this.guild.id);
             this.userChannelNode = new ChannelNode(this);
             this.userChannelNode.enabled = userChannel.enabled;
-            if(!this.userChannelNode.enabled || !this.userChannelNode.creatorChannelId) return;
+            if(userChannel.enabled == 0 || userChannel.creatorChannelId == undefined) return;
             this.userChannelNode.creatorChannel = this.guild.guild.channels.cache.get(userChannel.creatorChannelId);
             this.userChannelNode.category = this.userChannelNode.creatorChannel.parent;
         } catch(error) {
@@ -52,7 +52,7 @@ class ChannelManager extends BaseManager {
         }, node.category)
         node.enabled = true;
         await this.bot.dbManager.insertUserChannel(this.guild.id, true, node.creatorChannel.id);
-
+        
         
         this.userChannelNode = node;
         return this.userChannelNode;
