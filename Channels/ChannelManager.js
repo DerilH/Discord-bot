@@ -19,7 +19,7 @@ class ChannelManager extends BaseManager {
             const userChannel = await this.bot.dbManager.getUserChannel(this.guild.id);
             this.userChannelNode = new ChannelNode(this);
             this.userChannelNode.enabled = userChannel.enabled;
-            if(!this.userChannelNode.enabled) return;
+            if(!this.userChannelNode.enabled || !this.userChannelNode.creatorChannelId) return;
             this.userChannelNode.creatorChannel = this.guild.guild.channels.cache.get(userChannel.creatorChannelId);
             this.userChannelNode.category = this.userChannelNode.creatorChannel.parent;
         } catch(error) {
@@ -47,7 +47,7 @@ class ChannelManager extends BaseManager {
         node.category = await this.createChannel('User channels', {
             type: 'GUILD_CATEGORY'
         })
-        node.creatorChannel =  this.createChannelIn('Create room', {
+        node.creatorChannel =  await this.createChannelIn('Create room', {
             type: 'GUILD_VOICE'
         }, node.category)
         node.enabled = true;
