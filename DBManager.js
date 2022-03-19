@@ -24,17 +24,17 @@ class DBManager extends BaseClient {
         console.log("Database closed")
     }
 
-    async insertUserChannel(guildId, enabled, creatorChannelId) {
-        const exists = await this.guildExists(guildId, "userChannels");
+    async insertTempChannel(guildId, enabled, creatorChannelId) {
+        const exists = await this.guildExists(guildId, "temporaryChannels");
         if(exists){
-            await this.db.run(`UPDATE userChannels SET enabled = ?, creatorChannelId = ? WHERE guildId = ?`, [enabled, creatorChannelId, guildId])
+            await this.db.run(`UPDATE temporaryChannels SET enabled = ?, creatorChannelId = ? WHERE guildId = ?`, [enabled, creatorChannelId, guildId])
             .catch(err => {
                 if (err) {
                     console.log(err);
                 }
             })
         } else {
-            await this.db.run(`INSERT INTO userChannels (guildId, enabled, creatorChannelId) VALUES (?, ?, ?)`, [guildId, enabled, creatorChannelId])
+            await this.db.run(`INSERT INTO temporaryChannels (guildId, enabled, creatorChannelId) VALUES (?, ?, ?)`, [guildId, enabled, creatorChannelId])
             .catch(err => {
                 console.log(err);
             })
@@ -44,21 +44,21 @@ class DBManager extends BaseClient {
     async guildExists(guildId, table) {
         let exists = false;
         await this.db.get(`SELECT EXISTS(SELECT 1 FROM ${table} WHERE guildId = ?)`, [guildId]).then(row => {
-            if(row['EXISTS(SELECT 1 FROM userChannels WHERE guildId = ?)'] == 1) exists = true;
+            if(row[`EXISTS(SELECT 1 FROM ${table} WHERE guildId = ?)`] == 1) exists = true;
         })
         return exists;
     }
 
-    async getUserChannel(guildId) {
-        const exists = await this.guildExists(guildId, "userChannels");
+    async getTempChannel(guildId) {
+        const exists = await this.guildExists(guildId, "temporaryChannels");
         if(!exists){
             return undefined;
         }
-        let userChannel
-        await this.db.get(`SELECT * FROM userChannels WHERE guildId = ?`, [guildId]).then(row =>{
-            userChannel = row;
+        let tempChannel
+        await this.db.get(`SELECT * FROM temporaryChannels WHERE guildId = ?`, [guildId]).then(row =>{
+            tempChannel = row;
         });
-        return userChannel;
+        return tempChannel;
     }
 }
 module.exports.DBManager = DBManager;

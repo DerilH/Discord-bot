@@ -19,7 +19,7 @@ module.exports = {
         const state = interaction.options.getString('state');
 
         if(state == 'enable' ) {
-            const node = await guild.channel.temporaryChannels.enable();
+            await guild.channel.temporaryChannels.enable();
 
             interaction.reply('Temporary channels enabled');
         } else if(state == 'disable') {

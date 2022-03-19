@@ -11,15 +11,13 @@ class TemporaryChannelManager extends BaseManager{
     }
 
     async enable(categoryName, creatorChannelName) {
-
         if (this.enabled) {
             this.guild.errorEmitter.emit('interactionError', 'Temporary channels already enabled');
         }
-
+        
         if (!categoryName || typeof categoryName != 'string') {
             categoryName = 'Temporary channels';
         }
-
         if (!creatorChannelName || typeof creatorChannelName !== 'string') {
             creatorChannelName = "Create room";
         }
@@ -27,25 +25,26 @@ class TemporaryChannelManager extends BaseManager{
         this.category = await this.channelManager.createChannel(categoryName, {
             type: 'GUILD_CATEGORY'
         })
+
         this.creatorChannel = await this.channelManager.createChannelIn(creatorChannelName, {
             type: 'GUILD_VOICE'
         }, this.category)
 
         this.enabled = true;
-        await this.bot.dbManager.insertUserChannel(this.guild.id, true, node.creatorChannel.id);
+        await this.bot.dbManager.insertTempChannel(this.guild.id, true, this.creatorChannel.id);
 
         return {creatorChannel: this.creatorChannel, enabled: this.enabled, category: this.category};
     }
 
     async selfLoad() {
         try {
-            const exists = await this.bot.dbManager.guildExists(this.guild.id, 'userChannels');
+            const exists = await this.bot.dbManager.guildExists(this.guild.id, 'temporaryChannels');
             if (!exists) {
-                await this.bot.dbManager.insertUserChannel(this.guild.id, false, undefined)
+                await this.bot.dbManager.insertTempChannel(this.guild.id, false, undefined)
                 return;
             }
 
-            const temporaryChannelsInfo = await this.bot.dbManager.getUserChannel(this.guild.id);
+            const temporaryChannelsInfo = await this.bot.dbManager.getTempChannel(this.guild.id);
             this.enabled = temporaryChannelsInfo.enabled;
             if (temporaryChannelsInfo.enabled == 0 || temporaryChannelsInfo.creatorChannelId == undefined) return;
             this.creatorChannel = this.guild.guild.channels.cache.get(temporaryChannelsInfo.creatorChannelId);
@@ -81,7 +80,7 @@ class TemporaryChannelManager extends BaseManager{
         }
         await this.creatorChannel.delete();
         await this.category.delete();
-        await this.bot.dbManager.insertUserChannel(this.guild.id, false, null);
+        await this.bot.dbManager.insertTempChannel(this.guild.id, false, null);
         this.enabled = false;
     }
 }
