@@ -1,5 +1,5 @@
 const { getVoiceConnection } = require('@discordjs/voice');
-const { Client, Intents, GuildAuditLogs } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const { CmdCommandHandler } = require('./Interaction/CmdCommandHandler');
 const { CommandManager } = require('./Interaction/CommandManager');
 const { GuildManager } = require('./GuildManager');
@@ -32,7 +32,7 @@ class Bot {
             const guilds = Array.from(this.client.guilds.cache.values());
             guilds.forEach(async element => {
                 this.#guilds[element.id] = new GuildManager(this.client, this, element);
-                await this.#guilds[element.id].channel.loadUserChannels();
+                await this.#guilds[element.id].channel.temporaryChannels.selfLoad();
             });
             console.log('Ready!');
         });
@@ -66,12 +66,9 @@ class Bot {
         this.client.on('voiceStateUpdate', async (oldState, newState) => {
             const guild = this.getGuild(newState.guild.id);
 
-            if(!this.dbManager.guildExists(guild.id, 'userChannels')) return;
-            if(guild.channel.userChannelNode.enabled == 0) return;
-            if(newState.channel != guild.channel.userChannelNode.creatorChannel) return;
-
-            const channel = await guild.channel.createChannelIn(newState.member.displayName, {type: 'GUILD_VOICE'}, guild.channel.userChannelNode.category);
-            newState.member.voice.setChannel(channel);
+            if(guild.channel.temporaryChannels.enabled){
+                guild.channel.temporaryChannels.handle(oldState, newState);
+            }
         })
 
         this.client.on('guildCreate', guild => {
