@@ -65,11 +65,10 @@ class TemporaryChannelManager extends BaseManager{
             }
         }
         
-        //if(!this.dbManager.guildExists(guild.id, 'userChannels')) return;
         if(this.enabled == 0) return;
         if(newState.channel != this.creatorChannel) return;
 
-        const channel = await this.channelManager.createChannelIn(newState.member.displayName, {type: 'GUILD_VOICE'}, this.category);
+        const channel = await this.channelManager.createChannelIn(newState.member.displayName + "`s room", {type: 'GUILD_VOICE'}, this.category);
         this.channels.push(channel);
         newState.member.voice.setChannel(channel);
     }

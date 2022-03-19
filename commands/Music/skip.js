@@ -6,11 +6,16 @@ const { Interaction, Permissions } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('skip')
-        .setDescription('Skip currently playing song')
+        .setDescription('Skip songs')
+        .addIntegerOption(option => option
+            .setName('number')
+            .setDescription("Number of songs to skip")
+            .setRequired(false))
         .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);
+        const number = interaction.options.getInteger('number');
 
 		guild.voice.checkConnectedErr();
 
@@ -19,7 +24,21 @@ module.exports = {
             return;
         }
         
-        interaction.reply(guild.music.songQueue.current.info.title + " skipped!");
-        guild.music.skip();
+        if(number < 0) {
+            interaction.reply("Invalid number");
+            return
+        }
+
+        const skippedSongs = guild.music.skip(number);
+        if(number > 1) {
+            let reply = "";
+            skippedSongs.forEach(song => {
+                reply += "`"+ song.info.title + "`" + ' skipped\n';
+            })
+            interaction.reply(reply);
+        }else 
+        {
+            interaction.reply("`" + skippedSongs[0].info.title + "` " + " skipped")
+        };
     },
 };

@@ -23,7 +23,7 @@ class MusicManager extends BaseManager {
                 {
                     this.play(this.songQueue.current);
                 } else {
-                    this.nextInQueue(guild.id);
+                    this.nextInQueue();
                 }
             }
         });
@@ -44,8 +44,10 @@ class MusicManager extends BaseManager {
             let duration = element.info.durationInSec;
             fullDuration += duration;
         });
-        let time = Math.floor(fullDuration / 60) + ":" + (fullDuration % 60);
-        return time;
+
+        if(fullDuration < 3600) {
+           return new Date(fullDuration * 1000).toISOString().substr(14, 5)
+        } else return new Date(fullDuration * 1000).toISOString().substr(11, 8)
     }
 
     setVolume(volume) {
@@ -73,10 +75,17 @@ class MusicManager extends BaseManager {
         this.songQueue.clear();
     }
 
-    skip() {
+    skip(number) {
+        if(!number) number = 1;
         if(this.playing == false) return;
         this.audioPlayer.stop();
-        this.nextInQueue();
+        
+        let skipped = [];
+        for(let i = 0; i < number; i++){
+            skipped.push(this.songQueue.next());
+        }
+        this.play(this.songQueue.current);
+        return skipped;
     }
 
     pause() {

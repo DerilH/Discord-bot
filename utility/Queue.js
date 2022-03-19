@@ -53,6 +53,7 @@
         next()
         {
            this.previousItem = this.#arr.shift();
+           return this.previousItem;
         }
     }
 module.exports = Queue

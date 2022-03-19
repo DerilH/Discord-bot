@@ -1,15 +1,18 @@
 const { createAudioResource } = require('@discordjs/voice');
+const {ReReadable} = require("rereadable-stream");
 
 class Song
 {
     constructor(info, stream)
     {
         this.info = info;
-        this.stream = stream;
+        this.stream = stream.pipe(new ReReadable());
+
     }
 
     get resource() {
-        const res = createAudioResource(this.stream, { inlineVolume: true, });
+        const stream = this.stream.rewind();
+        let res = createAudioResource(stream, { inlineVolume: true, });
         return res;
     }
 }

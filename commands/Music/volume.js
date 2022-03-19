@@ -9,7 +9,7 @@ const { Guild, Permissions } = require('discord.js');
             .setName('volume')
             .setDescription("volume")
             .setRequired(true))
-            .setDefaultPermission(true),
+        .setDefaultPermission(true),
 	permissions: [Permissions.FLAGS.SEND_MESSAGES],
 	async execute(interaction, bot) {
         const guild = bot.getGuild(interaction.guild.id);

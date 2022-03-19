@@ -14,7 +14,7 @@ module.exports = {
       .setDescription('Song url')
       .setRequired(true))
     .setDefaultPermission(true),
-	permissions: [Permissions.FLAGS.SEND_MESSAGES],
+  permissions: [Permissions.FLAGS.SEND_MESSAGES],
   async execute(interaction, bot) {
     const guild = bot.getGuild(interaction.guild.id);
     const url = interaction.options.getString('url');
@@ -31,29 +31,30 @@ module.exports = {
 };
 
 async function getSong(url) {
-  let song;
-  let videoInfo;
-  if (play.yt_validate(url) === 'video') {
-    await play.video_info(url).then(data => {
-      videoInfo = data.video_details;
-    });
+    let song;
+    let videoInfo;
+    if (play.yt_validate(url) === 'video') {
+      await play.video_info(url).then(data => {
+        videoInfo = data.video_details;
+      });
 
-    const stream = await play.stream(url, { discordPlayerCompatibility: true, quality: 0 });
-    song = new Song(videoInfo, stream.stream);
-  } else {
-    videoInfo = await play.search(url, { limit: 1 });
-    if (!videoInfo[0]) {
-      await interaction.reply("Can not find song");
-      return;
+      const stream = await play.stream(url, { discordPlayerCompatibility: true, quality: 0 });
+      song = new Song(videoInfo, stream.stream);
+    } else {
+      videoInfo = await play.search(url, { limit: 1 });
+      if (!videoInfo[0]) {
+        await interaction.reply("Can not find song");
+        return;
+      }
+      videoInfo = videoInfo[0];
+      //console.log(videoInfo);
+      const stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true, quality: 0 });
+      song = new Song(videoInfo, stream.stream);
     }
-    videoInfo = videoInfo[0];
-    const stream = await play.stream(videoInfo.url, { discordPlayerCompatibility: true, quality: 0 });
-    song = new Song(videoInfo, stream.stream);
-  }
   return song;
 }
 
-function createEmbed(song, guild){
+function createEmbed(song, guild) {
   const playMessageEmbed = {
     "title": "Song_title",
     "color": 5719,

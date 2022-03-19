@@ -11,12 +11,10 @@ class ChannelManager extends BaseManager {
         let channel = await this.guild.guild.channels.create(name, options);
         return channel;
     }
-
+    
     async createChannelIn(name, options, category) {
         let channel = await category.createChannel(name, options);
         return channel;
     }
-
-    
 }
 module.exports.ChannelManager = ChannelManager;

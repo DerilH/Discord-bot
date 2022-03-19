@@ -53,7 +53,7 @@ class Bot {
                     await command.execute(interaction, this);
                 } catch (error) {
                     console.error(error);
-                    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                    interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
                 }
                 guild.errorEmitter.setInteraction(undefined);
             } catch (error) 
