@@ -24,7 +24,6 @@ class MemesManager extends BaseManager {
     }
 
     async randomAnimeImg(type) {
-        //if(type != 'pat' && type != 'cry' && type != 'hug' && type != 'waifu' && type != 'kiss' && type != 'slap' && type != 'smug' && type != 'punch') {
         return await randomMemes.getAnimeImgURL(type);
     }
 

@@ -6,6 +6,17 @@ module.exports = {
         .setDescription('Anime actions')
         .addSubcommand(subcommand => {
             return subcommand
+                .setName('search')
+                .setDescription('Search anime by your request')
+                .addStringOption(option => {
+                    return option
+                        .setName('request')
+                        .setDescription('Your anime request')
+                        .setRequired(true);
+                })
+        })
+        .addSubcommand(subcommand => {
+            return subcommand
                 .setName('image')
                 .setDescription('Finds random anime image by type')
                 .addStringOption(option => {
@@ -28,6 +39,7 @@ module.exports = {
                 .setName('neko')
                 .setDescription('Finds random neko')
         })
+
         .setDefaultPermission(true),
     permissions: [Permissions.FLAGS.SEND_MESSAGES],
     async execute(interaction, bot) {
@@ -43,11 +55,15 @@ module.exports = {
                     image: { url: imageUrl },
                 }
                 interaction.reply({ embeds: [embed] });
-                break;
+                return;
             case 'neko':
                 const neko = await guild.meme.randomNeko();
                 interaction.reply({ embeds: [neko.embed] });
-                break;
+                return;
+            case 'search':
+                const request = interaction.options.getString('search');
+                interaction.reply ('ok');
+                return;
         }
     },
 };
