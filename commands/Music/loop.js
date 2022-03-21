@@ -15,6 +15,9 @@ module.exports = {
     async execute(interaction, bot) {
             const guild = bot.getGuild(interaction.guild.id);
 
+            guild.voice.checkConnectedErr();
+            
+
             guild.music.looped = interaction.options.getBoolean('state');
 
             interaction.reply("Loop!");

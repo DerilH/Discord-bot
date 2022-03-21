@@ -33,6 +33,7 @@ class Bot {
             guilds.forEach(async element => {
                 this.#guilds[element.id] = new GuildManager(this.client, this, element);
                 await this.#guilds[element.id].channel.temporaryChannels.selfLoad();
+                await this.#guilds[element.id].moderation.bans.selfLoad();
             });
             console.log('Ready!');
         });
@@ -49,24 +50,17 @@ class Bot {
 
                 if (!command) return;
 
-                try {
-                    await command.execute(interaction, this);
-                } catch (error) {
-                    console.error(error);
-                    interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-                }
+                await command.execute(interaction, this);
                 guild.errorEmitter.setInteraction(undefined);
-            } catch (error) 
-            {
+            } catch (error) {
                 console.error = errorMethod;
             }
-            
         });
 
         this.client.on('voiceStateUpdate', async (oldState, newState) => {
             const guild = this.getGuild(newState.guild.id);
 
-            if(guild.channel.temporaryChannels.enabled){
+            if (guild.channel.temporaryChannels.enabled) {
                 guild.channel.temporaryChannels.handle(oldState, newState);
             }
         })

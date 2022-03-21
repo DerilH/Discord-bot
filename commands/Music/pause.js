@@ -12,7 +12,7 @@ const { Permissions } = require('discord.js');
 		guild.voice.checkConnectedErr();
 		
         if (guild.music.playing == false) {
-			await guild.errorEmitter.emit('interactionError', "No song is playing now");
+			guild.errorEmitter.emit('interactionError', "No song is playing now");
         }
 
         guild.music.pause();

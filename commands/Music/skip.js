@@ -20,12 +20,12 @@ module.exports = {
 		guild.voice.checkConnectedErr();
 
         if (guild.music.playing == false) {
-            interaction.reply("No song are playing now");
+            guild.errorEmitter.emit('interactionError', "No song are playing now");
             return;
         }
         
         if(number < 0) {
-            interaction.reply("Invalid number");
+            guild.errorEmitter.emit('interactionError', "Inalid number");
             return
         }
 

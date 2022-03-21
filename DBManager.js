@@ -60,5 +60,49 @@ class DBManager extends BaseClient {
         });
         return tempChannel;
     }
+    async insertBan(userId, guildId, date) {
+        const exists = await this.guildExists(guildId, "bannedUsers");
+        if(exists){
+            await this.db.run(`UPDATE bannedUsers SET endDate = ? WHERE guildId = ? AND userId = ?`, [date, guildId, userId])
+            .catch(err => {
+                if (err) {
+                    console.log(err);
+                }
+            })
+        } else {
+            await this.db.run(`INSERT INTO bannedUsers (endDate, guildId, userId) VALUES (?, ?, ?)`, [date, guildId, userId])
+            .catch(err => {
+                console.log(err);
+            })
+        } 
+    }
+
+    async getBanEndDate(userId, guildId) {
+        const exists = await this.guildExists(guildId, "bannedUsers");
+        if(!exists){
+            return undefined;
+        }
+        let date;
+        await this.db.get(`SELECT * FROM bannedUsers WHERE guildId = ? AND userId = ?`, [guildId, clientId]).then(row =>{
+            date = row.date;
+        });
+        return date;
+    }
+
+    async getAllBans(guildId){
+        const exists = await this.guildExists(guildId, "bannedUsers");
+        if(!exists){
+            return undefined;
+        }
+        let bans;
+        await this.db.get(`SELECT * FROM bannedUsers WHERE guildId = ?`, [guildId]).then(rows =>{
+            bans = rows;
+        });
+        return bans;
+    }
+
+    async removeBan(userId, guildId){
+        await this.db.run('DELETE FROM bannedUsers WHERE guildId = ? AND userId = ?', [guildId, userId]);
+    }
 }
 module.exports.DBManager = DBManager;

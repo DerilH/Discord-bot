@@ -45,7 +45,7 @@ const playMessageEmbed =  {
         guild.voice.checkConnectedErr();
 
         if (guild.music.playing == false) {
-          await guild.errorEmitter.emit('interactionError', "No song is playing now");
+          guild.errorEmitter.emit('interactionError', "No song are playing now");
         }
 
         const videoInfo = guild.music.songQueue.current.info;

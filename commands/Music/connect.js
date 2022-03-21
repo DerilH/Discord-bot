@@ -13,8 +13,7 @@ module.exports = {
         {
             if(interaction.member.voice.channel === interaction.guild.me.voice.channel)
             {
-                interaction.reply("I'm already here!")
-                return;
+                guild.errorEmitter.emit('interactionError', 'I`m already here');
             }
             
             guild.voice.connect(interaction.member.voice.channel.id);

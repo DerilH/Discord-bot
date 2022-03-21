@@ -1,10 +1,11 @@
 const { BaseClient } = require("./BaseClient");
-const { BotErrorEmitter } = require("./BotErrorEmitter");
+const { BotErrorEmitter } = require("./GuildErrorEmitter");
 const { ChannelManager } = require("./Channels/ChannelManager");
 const { MusicManager } = require("./Music/MusicManager");
 const { TikTokManager } = require("./Entertainment/TikTokManager");
 const { VoiceManager } = require("./Voice/VoiceManager");
 const { MemesManager } = require("./Entertainment/MemesManager");
+const { ModerationManager } = require("./ModerationManager");
 
 class GuildManager extends BaseClient
 {
@@ -20,6 +21,7 @@ class GuildManager extends BaseClient
         this.errorEmitter = new BotErrorEmitter(bot);
         this.tiktok = new TikTokManager(client, bot, this);
         this.meme = new MemesManager(client, bot, this);
+        this.moderation = new ModerationManager(client, bot, this);
     }
 }
 module.exports.GuildManager = GuildManager;

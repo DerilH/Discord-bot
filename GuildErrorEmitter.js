@@ -8,9 +8,9 @@ class BotErrorEmitter extends EventEmitter
     {
         super();
         this.bot = bot
-        this.on('interactionError', message => {
+        this.on('interactionError', (message) => {
             if(!this.#currentInteraction) return;
-            this.#currentInteraction.reply(message);
+            this.#currentInteraction.reply({content: message, ephemeral: true});
             console.error = () => {};
             throw message;
         })

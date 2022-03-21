@@ -82,7 +82,9 @@ class MusicManager extends BaseManager {
         
         let skipped = [];
         for(let i = 0; i < number; i++){
-            skipped.push(this.songQueue.next());
+            const song = this.songQueue.next();
+            if(!song) break;
+            skipped.push(song);
         }
         this.play(this.songQueue.current);
         return skipped;

@@ -12,7 +12,7 @@ module.exports = {
 		guild.voice.checkConnectedErr();
 
         if (guild.music.playing == false) {
-            await guild.errorEmitter.emit('interactionError', "No songs are playing now");
+            guild.errorEmitter.emit('interactionError', "No songs are playing now");
             return;
         }
 
