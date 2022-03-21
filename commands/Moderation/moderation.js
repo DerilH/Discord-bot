@@ -48,7 +48,7 @@ module.exports = {
             case 'tempban':
                 const user = interaction.options.getMember('user');
                 const time = interaction.options.getString('time');
-                guild.moderation.bans.tempBan(user, time);
+                guild.moderation.bans.tempBan(user.id, time);
                 interaction.reply(`${user.displayName} banned`);
                 return;
         }

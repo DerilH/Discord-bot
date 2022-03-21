@@ -62,7 +62,7 @@ module.exports = {
                 return;
             case 'search':
                 const request = interaction.options.getString('search');
-                interaction.reply ('ok');
+                interaction.reply ('Comming soon');
                 return;
         }
     },

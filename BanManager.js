@@ -1,9 +1,10 @@
+const { parse } = require("dotenv");
 const { BaseManager } = require("./BaseManager");
 
 class BanManager extends BaseManager{
     constructor(client, bot, guild){
         super(client, bot, guild)
-        this.bannedUsers = [];
+        this.bannedUsers = new Array();
     }
 
     async selfLoad() {
@@ -12,9 +13,11 @@ class BanManager extends BaseManager{
             if (!exists) {
                 return;
             }
-            this.bannedUsers = await this.bot.dbManager.getAllBans(this.guild.id);
+            const bans = await this.bot.dbManager.getAllBans(this.guild.id);
+            this.bannedUsers = this.bannedUsers.concat(bans);
             this.bannedUsers.forEach(ban => {
-                const time = this.getTimeToUnban(Date.parse(ban.endDate));
+                const time = this.getTimeToUnban(parseInt(ban.endDate));
+
                 if(time <= 0){
                     this.unban(ban.userId);
                     this.bannedUsers.splice(this.bannedUsers.indexOf(ban), 1);
@@ -22,7 +25,7 @@ class BanManager extends BaseManager{
                 }
                 setTimeout(() => {
                     this.unban(ban.userId);
-                }, this.getTimeToUnban(Date.Parse(ban.endDate)));
+                }, time);
             })
         } catch (error) {
             console.error(error);
@@ -31,7 +34,7 @@ class BanManager extends BaseManager{
 
     getTimeToUnban(unBanDate){
         const currentDate = new Date();
-        return unBanDate.getTime() - currentDate.getTime();
+        return unBanDate - currentDate.getTime();
     }
 
     async tempBan(userId, time){
@@ -53,8 +56,9 @@ class BanManager extends BaseManager{
         
         
         await this.guild.guild.members.ban(userId);
-        this.bot.dbManager.insertBan(userId, this.guild.id, endDate.toDateString());
-        const ban = {guildId:this.guild.id, userId: userId, endDate: endDate.toDateString()};
+        console.log(userId);
+        this.bot.dbManager.insertBan(userId, this.guild.id, endDate.getTime());
+        const ban = {guildId:this.guild.id, userId: userId, endDate: endDate.getTime()};
         this.bannedUsers.push(ban)
 
 
